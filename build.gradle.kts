@@ -7,9 +7,14 @@ plugins {
 
 repositories {
     jcenter()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
+    implementation("cafe.cryptography:curve25519-elisabeth:master-SNAPSHOT")
+
     testImplementation("junit:junit:4.12")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
 }
