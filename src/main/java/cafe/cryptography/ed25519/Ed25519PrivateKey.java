@@ -88,4 +88,13 @@ public class Ed25519PrivateKey {
 
         return new Ed25519ExpandedPrivateKey(s, upper);
     }
+
+    /**
+     * Derive the Ed25519 public key corresponding to this private key.
+     *
+     * @return the public key.
+     */
+    public Ed25519PublicKey derivePublic() {
+        return this.expand().derivePublic();
+    }
 }

@@ -20,6 +20,11 @@ public class Ed25519PublicKey {
     private final EdwardsPoint A;
     private final CompressedEdwardsY Aenc;
 
+    Ed25519PublicKey(EdwardsPoint A) {
+        this.A = A;
+        this.Aenc = A.compress();
+    }
+
     private Ed25519PublicKey(CompressedEdwardsY Aenc) {
         this.Aenc = Aenc;
         this.A = Aenc.decompress();
@@ -86,5 +91,20 @@ public class Ed25519PublicKey {
         EdwardsPoint Aneg = this.A.negate();
         EdwardsPoint R = EdwardsPoint.vartimeDoubleScalarMultiplyBasepoint(k, Aneg, signature.S);
         return R.compress().equals(signature.R);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Ed25519PublicKey)) {
+            return false;
+        }
+
+        Ed25519PublicKey other = (Ed25519PublicKey) obj;
+        return this.Aenc.equals(other.Aenc);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.Aenc.hashCode();
     }
 }

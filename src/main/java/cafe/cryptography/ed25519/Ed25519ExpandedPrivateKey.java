@@ -27,6 +27,16 @@ public class Ed25519ExpandedPrivateKey {
     }
 
     /**
+     * Derive the Ed25519 public key corresponding to this expanded private key.
+     *
+     * @return the public key.
+     */
+    public Ed25519PublicKey derivePublic() {
+        EdwardsPoint A = Constants.ED25519_BASEPOINT_TABLE.multiply(this.s);
+        return new Ed25519PublicKey(A);
+    }
+
+    /**
      * Sign a message with this expanded private key.
      *
      * @return the signature.

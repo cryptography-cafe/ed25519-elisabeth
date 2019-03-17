@@ -141,6 +141,15 @@ public class Ed25519Rfc8032TestVectors {
     // @formatter:on
 
     @Test
+    public void derivePublic() {
+        assertThat(TEST_1_SK.derivePublic(), is(TEST_1_VK));
+        assertThat(TEST_2_SK.derivePublic(), is(TEST_2_VK));
+        assertThat(TEST_3_SK.derivePublic(), is(TEST_3_VK));
+        assertThat(TEST_1024_SK.derivePublic(), is(TEST_1024_VK));
+        assertThat(TEST_SHA_SK.derivePublic(), is(TEST_SHA_VK));
+    }
+
+    @Test
     public void testSign() {
         assertThat(TEST_1_SK.expand().sign(TEST_1_MSG, TEST_1_VK), is(TEST_1_SIG));
         assertThat(TEST_2_SK.expand().sign(TEST_2_MSG, TEST_2_VK), is(TEST_2_SIG));
