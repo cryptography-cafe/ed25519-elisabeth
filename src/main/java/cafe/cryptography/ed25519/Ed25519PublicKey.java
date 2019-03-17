@@ -50,6 +50,15 @@ public class Ed25519PublicKey {
      * @return true if the signature is valid, false otherwise.
      */
     public boolean verify(byte[] message, Ed25519Signature signature) {
+        return this.verify(message, 0, message.length, signature);
+    }
+
+    /**
+     * Verify a signature over a message with this public key.
+     *
+     * @return true if the signature is valid, false otherwise.
+     */
+    public boolean verify(byte[] message, int offset, int length, Ed25519Signature signature) {
         // @formatter:off
         // RFC 8032, section 5.1:
         //   PH(x)   | x (i.e., the identity function)
@@ -67,7 +76,7 @@ public class Ed25519PublicKey {
         }
         h.update(signature.R.toByteArray());
         h.update(this.Aenc.toByteArray());
-        h.update(message);
+        h.update(message, offset, length);
         Scalar k = Scalar.fromBytesModOrderWide(h.digest());
 
         // @formatter:off

@@ -32,6 +32,15 @@ public class Ed25519ExpandedPrivateKey {
      * @return the signature.
      */
     public Ed25519Signature sign(byte[] message, Ed25519PublicKey publicKey) {
+        return this.sign(message, 0, message.length, publicKey);
+    }
+
+    /**
+     * Sign a message with this expanded private key.
+     *
+     * @return the signature.
+     */
+    public Ed25519Signature sign(byte[] message, int offset, int length, Ed25519PublicKey publicKey) {
         // @formatter:off
         // RFC 8032, section 5.1:
         //   PH(x)   | x (i.e., the identity function)
@@ -49,7 +58,7 @@ public class Ed25519ExpandedPrivateKey {
             throw new RuntimeException(e);
         }
         h.update(this.prefix);
-        h.update(message);
+        h.update(message, offset, length);
         Scalar r = Scalar.fromBytesModOrderWide(h.digest());
 
         // @formatter:off
@@ -66,7 +75,7 @@ public class Ed25519ExpandedPrivateKey {
         h.reset();
         h.update(R.toByteArray());
         h.update(publicKey.toByteArray());
-        h.update(message);
+        h.update(message, offset, length);
         Scalar k = Scalar.fromBytesModOrderWide(h.digest());
 
         // @formatter:off
