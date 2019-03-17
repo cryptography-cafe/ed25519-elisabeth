@@ -8,6 +8,7 @@ package cafe.cryptography.ed25519;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import cafe.cryptography.curve25519.Scalar;
@@ -23,6 +24,17 @@ public class Ed25519PrivateKey {
             throw new IllegalArgumentException("Invalid private key");
         }
         this.secret = Arrays.copyOf(secret, secret.length);
+    }
+
+    /**
+     * Generate an Ed25519PrivateKey from a SecureRandom.
+     *
+     * @return the random private key.
+     */
+    public static Ed25519PrivateKey generate(SecureRandom random) {
+        byte[] secret = new byte[32];
+        random.nextBytes(secret);
+        return new Ed25519PrivateKey(secret);
     }
 
     /**
