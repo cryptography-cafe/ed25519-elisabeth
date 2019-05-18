@@ -43,6 +43,43 @@ publishing {
             from(components["java"])
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])
+
+            pom {
+                name.set("ed25519-elisabeth")
+                description.set("Pure Java implementation of the Ed25519 signature scheme")
+                url.set("https://cryptography.cafe")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("str4d")
+                        name.set("Jack Grigg")
+                        email.set("thestr4d@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/cryptography-cafe/ed25519-elisabeth.git")
+                    developerConnection.set("scm:git:ssh://github.com:cryptography-cafe/ed25519-elisabeth.git")
+                    url.set("https://github.com/cryptography-cafe/ed25519-elisabeth/tree/master")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            val snapshotRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotRepoUrl else releasesRepoUrl)
+            credentials {
+                val NEXUS_USERNAME: String by project
+                val NEXUS_PASSWORD: String by project
+                username = NEXUS_USERNAME
+                password = NEXUS_PASSWORD
+            }
         }
     }
 }
