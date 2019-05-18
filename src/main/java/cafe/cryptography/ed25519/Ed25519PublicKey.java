@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 
 import cafe.cryptography.curve25519.CompressedEdwardsY;
 import cafe.cryptography.curve25519.EdwardsPoint;
+import cafe.cryptography.curve25519.InvalidEncodingException;
 import cafe.cryptography.curve25519.Scalar;
 
 /**
@@ -25,7 +26,7 @@ public class Ed25519PublicKey {
         this.Aenc = A.compress();
     }
 
-    private Ed25519PublicKey(CompressedEdwardsY Aenc) {
+    private Ed25519PublicKey(CompressedEdwardsY Aenc) throws InvalidEncodingException {
         this.Aenc = Aenc;
         this.A = Aenc.decompress();
     }
@@ -34,8 +35,9 @@ public class Ed25519PublicKey {
      * Construct an Ed25519PublicKey from an array of bytes.
      *
      * @return a public key.
+     * @throws InvalidEncodingException if the input is not a valid encoding.
      */
-    public static Ed25519PublicKey fromByteArray(byte[] input) {
+    public static Ed25519PublicKey fromByteArray(byte[] input) throws InvalidEncodingException {
         CompressedEdwardsY Aenc = new CompressedEdwardsY(input);
         return new Ed25519PublicKey(Aenc);
     }

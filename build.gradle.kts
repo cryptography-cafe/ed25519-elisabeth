@@ -8,12 +8,12 @@ plugins {
 repositories {
     jcenter()
     maven {
-        url = uri("https://jitpack.io")
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
 dependencies {
-    implementation("cafe.cryptography:curve25519-elisabeth:master-SNAPSHOT")
+    implementation("cafe.cryptography:curve25519-elisabeth:0.1.0-SNAPSHOT")
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
@@ -25,7 +25,7 @@ java {
 }
 
 group = "cafe.cryptography"
-version = "0.0.0"
+version = "0.1.0-SNAPSHOT"
 
 tasks.register<Jar>("sourcesJar") {
     from(sourceSets.main.get().allJava)

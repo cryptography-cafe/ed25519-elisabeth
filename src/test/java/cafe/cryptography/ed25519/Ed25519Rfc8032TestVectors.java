@@ -1,5 +1,7 @@
 package cafe.cryptography.ed25519;
 
+import cafe.cryptography.curve25519.InvalidEncodingException;
+
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -10,10 +12,18 @@ import static org.junit.Assert.assertTrue;
  * Test against the RFC 8032 test vectors.
  */
 public class Ed25519Rfc8032TestVectors {
+    static Ed25519PublicKey publicKey(byte[] input) {
+        try {
+            return Ed25519PublicKey.fromByteArray(input);
+        } catch (InvalidEncodingException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     // @formatter:off
     static final Ed25519PrivateKey TEST_1_SK = Ed25519PrivateKey.fromByteArray(
         Utils.hexToBytes("9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60"));
-    static final Ed25519PublicKey TEST_1_VK = Ed25519PublicKey.fromByteArray(
+    static final Ed25519PublicKey TEST_1_VK = publicKey(
         Utils.hexToBytes("d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"));
     static final byte[] TEST_1_MSG = new byte[] {};
     static final Ed25519Signature TEST_1_SIG = Ed25519Signature.fromByteArray(
@@ -25,7 +35,7 @@ public class Ed25519Rfc8032TestVectors {
 
     static final Ed25519PrivateKey TEST_2_SK = Ed25519PrivateKey.fromByteArray(
         Utils.hexToBytes("4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb"));
-    static final Ed25519PublicKey TEST_2_VK = Ed25519PublicKey.fromByteArray(
+    static final Ed25519PublicKey TEST_2_VK = publicKey(
         Utils.hexToBytes("3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c"));
     static final byte[] TEST_2_MSG = Utils.hexToBytes("72");
     static final Ed25519Signature TEST_2_SIG = Ed25519Signature.fromByteArray(
@@ -37,7 +47,7 @@ public class Ed25519Rfc8032TestVectors {
 
     static final Ed25519PrivateKey TEST_3_SK = Ed25519PrivateKey.fromByteArray(
         Utils.hexToBytes("c5aa8df43f9f837bedb7442f31dcb7b166d38535076f094b85ce3a2e0b4458f7"));
-    static final Ed25519PublicKey TEST_3_VK = Ed25519PublicKey.fromByteArray(
+    static final Ed25519PublicKey TEST_3_VK = publicKey(
         Utils.hexToBytes("fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025"));
     static final byte[] TEST_3_MSG = Utils.hexToBytes("af82");
     static final Ed25519Signature TEST_3_SIG = Ed25519Signature.fromByteArray(
@@ -49,7 +59,7 @@ public class Ed25519Rfc8032TestVectors {
 
     static final Ed25519PrivateKey TEST_1024_SK = Ed25519PrivateKey.fromByteArray(
         Utils.hexToBytes("f5e5767cf153319517630f226876b86c8160cc583bc013744c6bf255f5cc0ee5"));
-    static final Ed25519PublicKey TEST_1024_VK = Ed25519PublicKey.fromByteArray(
+    static final Ed25519PublicKey TEST_1024_VK = publicKey(
         Utils.hexToBytes("278117fc144c72340f67d0f2316e8386ceffbf2b2428c9c51fef7c597f1d426e"));
     static final byte[] TEST_1024_MSG = Utils.hexToBytes(
             "08b8b2b733424243760fe426a4b54908" +
@@ -125,7 +135,7 @@ public class Ed25519Rfc8032TestVectors {
 
     static final Ed25519PrivateKey TEST_SHA_SK = Ed25519PrivateKey.fromByteArray(
         Utils.hexToBytes("833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42"));
-    static final Ed25519PublicKey TEST_SHA_VK = Ed25519PublicKey.fromByteArray(
+    static final Ed25519PublicKey TEST_SHA_VK = publicKey(
         Utils.hexToBytes("ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf"));
     static final byte[] TEST_SHA_MSG = Utils.hexToBytes(
             "ddaf35a193617abacc417349ae204131" +
