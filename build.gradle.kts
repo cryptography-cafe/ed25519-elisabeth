@@ -31,8 +31,10 @@ sourceSets {
 dependencies {
     implementation("cafe.cryptography:curve25519-elisabeth:0.1.0")
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("junit:junit:4.12") {
+        exclude("org.hamcrest")
+    }
+    testImplementation("org.hamcrest:hamcrest:2.1")
 }
 
 java {
