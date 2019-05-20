@@ -19,6 +19,18 @@ project.afterEvaluate {
         options.compilerArgs.addAll(listOf("--release", version))
     }
 
+    // When compiling module-info.java, move classpath to module path so that module
+    // dependencies can be resolved.
+    //
+    // For regular compilation, leave classpath as-is because the module path is
+    // ignored when targeting pre-Java 9.
+    tasks.named<JavaCompile>("compileModuleInfoJava") {
+        doFirst {
+            options.compilerArgs.addAll(listOf("--module-path", classpath.asPath))
+            classpath = files()
+        }
+    }
+
     // Set up Java override if configured (used to test with Java 7 and 8).
     if (targetJavaHome != null) {
         logger.info("Target Java home set to ${targetJavaHome}")
@@ -41,18 +53,6 @@ project.afterEvaluate {
 
         tasks.withType<JavaExec>().configureEach {
             executable = javaExecutable("java")
-        }
-    } else {
-        // When compiling module-info.java, move classpath to module path so that module
-        // dependencies can be resolved.
-        //
-        // For regular compilation, leave classpath as-is because the module path is
-        // ignored when targeting pre-Java 9.
-        tasks.named<JavaCompile>("compileModuleInfoJava") {
-            doFirst {
-                options.compilerArgs.addAll(listOf("--module-path", classpath.asPath))
-                classpath = files()
-            }
         }
     }
 }
