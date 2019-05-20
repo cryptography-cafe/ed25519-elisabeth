@@ -5,10 +5,28 @@ plugins {
     id("me.champeau.gradle.jmh") version "0.4.8"
 }
 
+apply(from = "jdks.gradle.kts")
+
 repositories {
     jcenter()
     maven {
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            exclude("module-info.java")
+        }
+    }
+    create("moduleInfo") {
+        java {
+            // We need the entire source directory here, otherwise we get a
+            // "package is empty or does not exist" error during compilation.
+            srcDir("src/main/java")
+            compileClasspath = sourceSets.main.get().compileClasspath
+        }
     }
 }
 
@@ -22,6 +40,21 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+tasks.named<JavaCompile>("compileModuleInfoJava") {
+    sourceCompatibility = "9"
+    targetCompatibility = "9"
+
+    doLast {
+        // Leave only the module-info.class
+        delete("$destinationDir/cafe")
+    }
+}
+
+tasks.jar {
+    // Add the Java 9+ module-info.class to the Java 7+ classes
+    from(sourceSets["moduleInfo"].output)
 }
 
 group = "cafe.cryptography"
@@ -95,53 +128,3 @@ tasks.check {
 }
 
 apply(from = "javadoc.gradle.kts")
-
-// Set up bootstrapClasspath for Java 7.
-val java7BootClasspath: String by project
-val bootClasspath = if (hasProperty("java7BootClasspath")) java7BootClasspath else {
-    var java7Home = System.getenv("JAVA7_HOME")
-    if (java7Home != null) {
-        "${java7Home}/jre/lib/jce.jar:${java7Home}/jre/lib/rt.jar"
-    } else null
-}
-if (bootClasspath != null) {
-    tasks.withType<JavaCompile>().configureEach {
-        options.apply {
-            bootstrapClasspath = files(bootClasspath)
-        }
-    }
-}
-
-// Set up Java override if configured (used to test with Java 7).
-val javaHome: String by project
-val targetJavaHome = if (hasProperty("javaHome")) javaHome else System.getenv("TARGET_JAVA_HOME")
-if (targetJavaHome != null) {
-    println("Target Java home set to ${targetJavaHome}")
-    println("Configuring Gradle to use forked compilation and testing")
-
-    val javaExecutablesPath = File(targetJavaHome, "bin")
-    fun javaExecutable(execName: String): String {
-        val executable = File(javaExecutablesPath, execName)
-        require(executable.exists()) { "There is no ${execName} executable in ${javaExecutablesPath}" }
-        return executable.toString()
-    }
-
-    tasks.withType<JavaCompile>().configureEach {
-        options.apply {
-            isFork = true
-            forkOptions.javaHome = file(targetJavaHome)
-        }
-    }
-
-    tasks.withType<Javadoc>().configureEach {
-        executable = javaExecutable("javadoc")
-    }
-
-    tasks.withType<Test>().configureEach {
-        executable = javaExecutable("java")
-    }
-
-    tasks.withType<JavaExec>().configureEach {
-        executable = javaExecutable("java")
-    }
-}

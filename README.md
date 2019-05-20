@@ -1,7 +1,7 @@
 # ed25519-elisabeth
 A pure-Java implementation of the Ed25519 signature scheme.
 
-Requires Java 7 or higher.
+Requires Java 7 or higher. Requires JDK 9 or higher to build.
 
 # Documentation
 
