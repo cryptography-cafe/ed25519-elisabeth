@@ -9,9 +9,6 @@ apply(from = "jdks.gradle.kts")
 
 repositories {
     jcenter()
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
 }
 
 sourceSets {
@@ -31,7 +28,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("cafe.cryptography:curve25519-elisabeth:0.1.0-SNAPSHOT")
+    implementation("cafe.cryptography:curve25519-elisabeth:0.1.0")
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
