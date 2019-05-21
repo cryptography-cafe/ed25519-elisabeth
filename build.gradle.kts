@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    signing
     jacoco
     id("me.champeau.gradle.jmh") version "0.4.8"
 }
@@ -9,9 +10,6 @@ apply(from = "jdks.gradle.kts")
 
 repositories {
     jcenter()
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
 }
 
 sourceSets {
@@ -31,10 +29,12 @@ sourceSets {
 }
 
 dependencies {
-    implementation("cafe.cryptography:curve25519-elisabeth:0.1.0-SNAPSHOT")
+    implementation("cafe.cryptography:curve25519-elisabeth:0.1.0")
 
-    testImplementation("junit:junit:4.12")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("junit:junit:4.12") {
+        exclude("org.hamcrest")
+    }
+    testImplementation("org.hamcrest:hamcrest:2.1")
 }
 
 java {
@@ -115,6 +115,10 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }
 
 tasks.jacocoTestReport {
