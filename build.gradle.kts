@@ -59,6 +59,7 @@ tasks.jar {
 
 group = "cafe.cryptography"
 version = "0.1.0-SNAPSHOT"
+extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
 
 tasks.register<Jar>("sourcesJar") {
     from(sourceSets.main.get().allJava)
@@ -118,6 +119,9 @@ publishing {
 }
 
 signing {
+    setRequired({
+        (project.extra["isReleaseVersion"] as Boolean) && gradle.taskGraph.hasTask("uploadArchives")
+    })
     sign(publishing.publications["mavenJava"])
 }
 
