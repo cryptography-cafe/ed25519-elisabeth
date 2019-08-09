@@ -31,6 +31,10 @@ public class Ed25519Signature {
      * @return a signature.
      */
     public static Ed25519Signature fromByteArray(byte[] input) {
+        if (input.length != 64) {
+            throw new IllegalArgumentException("signature length is wrong");
+        }
+
         // RFC 8032, section 5.1.7:
         // @formatter:off
         // 1. To verify a signature [...], first split the signature into two
