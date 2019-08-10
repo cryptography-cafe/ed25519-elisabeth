@@ -60,14 +60,12 @@ public class Ed25519Signature {
         //     little-endian encoding of S (32 octets; the three most
         //     significant bits of the final octet are always zero).
         // @formatter:on
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(64);
-        try {
-            baos.write(this.R.toByteArray());
-            baos.write(this.S.toByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException("Should be able to write to a ByteArrayOutputStream");
-        }
-        return baos.toByteArray();
+        byte[] Rbar = this.R.toByteArray();
+        byte[] Sbar = this.S.toByteArray();
+        byte[] sig = new byte[Rbar.length + Sbar.length];
+        System.arraycopy(Rbar, 0, sig, 0, Rbar.length);
+        System.arraycopy(Sbar, 0, sig, Rbar.length, Sbar.length);
+        return sig;
     }
 
     @Override
