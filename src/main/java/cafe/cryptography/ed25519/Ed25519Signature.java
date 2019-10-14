@@ -44,7 +44,17 @@ public class Ed25519Signature {
         //    signature is invalid.
         // @formatter:on
         CompressedEdwardsY R = new CompressedEdwardsY(Arrays.copyOfRange(input, 0, 32));
-        Scalar S = Scalar.fromCanonicalBytes(Arrays.copyOfRange(input, 32, 64));
+
+        // If the four most significant bits are unset, we know the scalar is
+        // guaranteed to be fully reduced modulo the order of the basepoint, and
+        // thus we can skip the full check.
+        Scalar S;
+        if ((input[63] & 240) == 0) {
+          S = Scalar.fromBits(Arrays.copyOfRange(input, 32, 64));
+        } else {
+          S = Scalar.fromCanonicalBytes(Arrays.copyOfRange(input, 32, 64));
+        }
+
         return new Ed25519Signature(R, S);
     }
 
