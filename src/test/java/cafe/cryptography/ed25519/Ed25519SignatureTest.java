@@ -36,4 +36,10 @@ public class Ed25519SignatureTest {
         Ed25519Signature.fromByteArray(Utils.hexToBytes(
                 "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
     }
+
+    @Test
+    public void fromByteArraySucceedsFastS() {
+        Ed25519Signature.fromByteArray(Utils.hexToBytes(
+                "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0f"));
+    }
 }
