@@ -13,6 +13,7 @@ import cafe.cryptography.curve25519.CompressedEdwardsY;
 import cafe.cryptography.curve25519.Constants;
 import cafe.cryptography.curve25519.EdwardsPoint;
 import cafe.cryptography.curve25519.Scalar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An Ed25519 expanded private key.
@@ -31,6 +32,7 @@ public class Ed25519ExpandedPrivateKey {
      *
      * @return the public key.
      */
+    @NotNull
     public Ed25519PublicKey derivePublic() {
         EdwardsPoint A = Constants.ED25519_BASEPOINT_TABLE.multiply(this.s);
         return new Ed25519PublicKey(A);
@@ -41,7 +43,8 @@ public class Ed25519ExpandedPrivateKey {
      *
      * @return the signature.
      */
-    public Ed25519Signature sign(byte[] message, Ed25519PublicKey publicKey) {
+    @NotNull
+    public Ed25519Signature sign(@NotNull byte[] message, @NotNull Ed25519PublicKey publicKey) {
         return this.sign(message, 0, message.length, publicKey);
     }
 
@@ -50,7 +53,8 @@ public class Ed25519ExpandedPrivateKey {
      *
      * @return the signature.
      */
-    public Ed25519Signature sign(byte[] message, int offset, int length, Ed25519PublicKey publicKey) {
+    @NotNull
+    public Ed25519Signature sign(@NotNull byte[] message, int offset, int length, @NotNull Ed25519PublicKey publicKey) {
         // @formatter:off
         // RFC 8032, section 5.1:
         //   PH(x)   | x (i.e., the identity function)

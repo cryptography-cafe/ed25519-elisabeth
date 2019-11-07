@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import cafe.cryptography.curve25519.CompressedEdwardsY;
 import cafe.cryptography.curve25519.Scalar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An Ed25519 signature.
@@ -30,7 +31,8 @@ public class Ed25519Signature {
      *
      * @return a signature.
      */
-    public static Ed25519Signature fromByteArray(byte[] input) {
+    @NotNull
+    public static Ed25519Signature fromByteArray(@NotNull byte[] input) {
         if (input.length != 64) {
             throw new IllegalArgumentException("signature length is wrong");
         }
@@ -53,6 +55,7 @@ public class Ed25519Signature {
      *
      * @return the encoded signature.
      */
+    @NotNull
     public byte[] toByteArray() {
         // RFC 8032, section 5.1.6:
         // @formatter:off
