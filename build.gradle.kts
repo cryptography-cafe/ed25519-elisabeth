@@ -60,7 +60,7 @@ tasks.jar {
 }
 
 group = "cafe.cryptography"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 extra["isReleaseVersion"] = !version.toString().endsWith("SNAPSHOT")
 
 tasks.register<Jar>("sourcesJar") {
