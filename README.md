@@ -4,6 +4,24 @@ A pure-Java implementation of the Ed25519 signature scheme.
 
 Requires Java 7 or higher. Requires JDK 9 or higher to build.
 
+# Usage
+
+## Gradle
+
+```
+implementation 'cafe.cryptography:ed25519-elisabeth:0.1.0'
+```
+
+## Apache Maven
+
+```
+<dependency>
+  <groupId>cafe.cryptography</groupId>
+  <artifactId>ed25519-elisabeth</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
 # Documentation
 
 To view the public-facing API documentation, first build it:
