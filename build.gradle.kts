@@ -23,7 +23,6 @@ sourceSets {
             // We need the entire source directory here, otherwise we get a
             // "package is empty or does not exist" error during compilation.
             srcDir("src/main/java")
-            include("org.jetbrains.annotations")
             compileClasspath = sourceSets.main.get().compileClasspath
         }
     }
@@ -31,7 +30,9 @@ sourceSets {
 
 dependencies {
     implementation("cafe.cryptography:curve25519-elisabeth:0.1.0")
-    implementation("org.jetbrains:annotations:16.0.2")
+
+    compileOnly("org.jetbrains:annotations:19.0.0")
+
     testImplementation("junit:junit:4.12") {
         exclude("org.hamcrest")
     }
