@@ -13,6 +13,7 @@ import cafe.cryptography.curve25519.CompressedEdwardsY;
 import cafe.cryptography.curve25519.EdwardsPoint;
 import cafe.cryptography.curve25519.InvalidEncodingException;
 import cafe.cryptography.curve25519.Scalar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An Ed25519 public key.
@@ -37,7 +38,8 @@ public class Ed25519PublicKey {
      * @return a public key.
      * @throws InvalidEncodingException if the input is not a valid encoding.
      */
-    public static Ed25519PublicKey fromByteArray(byte[] input) throws InvalidEncodingException {
+    @NotNull
+    public static Ed25519PublicKey fromByteArray(@NotNull byte[] input) throws InvalidEncodingException {
         CompressedEdwardsY Aenc = new CompressedEdwardsY(input);
         return new Ed25519PublicKey(Aenc);
     }
@@ -47,6 +49,7 @@ public class Ed25519PublicKey {
      *
      * @return the encoded public key.
      */
+    @NotNull
     public byte[] toByteArray() {
         return this.Aenc.toByteArray();
     }
@@ -56,7 +59,7 @@ public class Ed25519PublicKey {
      *
      * @return true if the signature is valid, false otherwise.
      */
-    public boolean verify(byte[] message, Ed25519Signature signature) {
+    public boolean verify(@NotNull byte[] message, @NotNull Ed25519Signature signature) {
         return this.verify(message, 0, message.length, signature);
     }
 
@@ -65,7 +68,7 @@ public class Ed25519PublicKey {
      *
      * @return true if the signature is valid, false otherwise.
      */
-    public boolean verify(byte[] message, int offset, int length, Ed25519Signature signature) {
+    public boolean verify(@NotNull byte[] message, int offset, int length, @NotNull Ed25519Signature signature) {
         // @formatter:off
         // RFC 8032, section 5.1:
         //   PH(x)   | x (i.e., the identity function)

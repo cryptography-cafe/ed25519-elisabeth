@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import cafe.cryptography.curve25519.Scalar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An Ed25519 private key.
@@ -31,7 +32,8 @@ public class Ed25519PrivateKey {
      *
      * @return the random private key.
      */
-    public static Ed25519PrivateKey generate(SecureRandom random) {
+    @NotNull
+    public static Ed25519PrivateKey generate(@NotNull SecureRandom random) {
         byte[] secret = new byte[32];
         random.nextBytes(secret);
         return new Ed25519PrivateKey(secret);
@@ -42,7 +44,8 @@ public class Ed25519PrivateKey {
      *
      * @return a private key.
      */
-    public static Ed25519PrivateKey fromByteArray(byte[] secret) {
+    @NotNull
+    public static Ed25519PrivateKey fromByteArray(@NotNull byte[] secret) {
         return new Ed25519PrivateKey(secret);
     }
 
@@ -51,6 +54,7 @@ public class Ed25519PrivateKey {
      *
      * @return the encoded public key.
      */
+    @NotNull
     public byte[] toByteArray() {
         return Arrays.copyOf(this.secret, this.secret.length);
     }
@@ -61,6 +65,7 @@ public class Ed25519PrivateKey {
      *
      * @return the expanded private key.
      */
+    @NotNull
     public Ed25519ExpandedPrivateKey expand() {
         // @formatter:off
         // RFC 8032, section 5.1.6:
@@ -106,6 +111,7 @@ public class Ed25519PrivateKey {
      *
      * @return the public key.
      */
+    @NotNull
     public Ed25519PublicKey derivePublic() {
         return this.expand().derivePublic();
     }
