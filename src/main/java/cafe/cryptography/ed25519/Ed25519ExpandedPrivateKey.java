@@ -20,6 +20,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Ed25519ExpandedPrivateKey {
     private final Scalar s;
+
+    /**
+     * The prefix component of the expanded Ed25519 private key.
+     *
+     * Note that because the `final` keyword only makes the reference a constant, the
+     * contents of this byte[] could in theory be mutated (via reflection, as this field
+     * is private). This misunderstanding was a contributor to the "final" security bug in
+     * Google's Java implementation of Ed25519 [0]. However, the primary cause of that bug
+     * was their reuse of the prefix buffer to hold the result of calculating S; we are
+     * protected from that failure mode by the type-safe curve25519-elisabeth API.
+     *
+     * [0] https://github.com/cryptosubtlety/final-security-bug
+     */
     private final byte[] prefix;
 
     Ed25519ExpandedPrivateKey(Scalar s, byte[] prefix) {
