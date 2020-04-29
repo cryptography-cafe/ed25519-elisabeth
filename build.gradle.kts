@@ -33,10 +33,10 @@ dependencies {
 
     compileOnly("org.jetbrains:annotations:19.0.0")
 
-    testImplementation("junit:junit:4.12") {
+    testImplementation("junit:junit:4.13") {
         exclude("org.hamcrest")
     }
-    testImplementation("org.hamcrest:hamcrest:2.1")
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
 java {
