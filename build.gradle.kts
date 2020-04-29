@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
     signing
     jacoco
-    id("me.champeau.gradle.jmh") version "0.4.8"
+    id("me.champeau.gradle.jmh") version "0.5.0"
 }
 
 apply(from = "jdks.gradle.kts")
@@ -38,6 +38,8 @@ dependencies {
     }
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("com.google.code.gson:gson:2.8.6")
+
+    jmh("org.bouncycastle:bcprov-jdk15on:1.65")
 }
 
 java {
