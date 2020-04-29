@@ -37,6 +37,7 @@ dependencies {
         exclude("org.hamcrest")
     }
     testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("com.google.code.gson:gson:2.8.6")
 }
 
 java {
