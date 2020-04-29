@@ -16,18 +16,10 @@ package com.google.security.wycheproof;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import cafe.cryptography.ed25519.Ed25519PublicKey;
+import cafe.cryptography.ed25519.Ed25519Signature;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -56,104 +48,6 @@ public class JsonSignatureTest {
   /** Convenience method to get a byte array from a JsonObject */
   protected static byte[] getBytes(JsonObject object, String name) throws Exception {
     return JsonUtil.asByteArray(object.get(name));
-  }
-
-  /**
-   * Convert hash names, so that they can be used in an algorithm name for a signature. The
-   * algorithm names used in JCA are a bit inconsequential. E.g. a dash is necessary for message
-   * digests (e.g. "SHA-256") but are not used in the corresponding names for digital signatures
-   * (e.g. "SHA256WITHECDSA"). Providers sometimes use distinct algorithm names for the same
-   * cryptographic primitive. On the other hand, the dash remains for SHA-3. Hence, the correct
-   * name for ECDSA with SHA3-256 is "SHA3-256WithECDSA".
-   *
-   * <p>See https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html
-   *
-   * @param md the name of a message digest
-   * @return the name of the message digest when used in a signature algorithm.
-   */
-  protected static String convertMdName(String md) {
-    if (md.equalsIgnoreCase("SHA-1")) {
-      return "SHA1";
-    } else if (md.equalsIgnoreCase("SHA-224")) {
-      return "SHA224";
-    } else if (md.equalsIgnoreCase("SHA-256")) {
-      return "SHA256";
-    } else if (md.equalsIgnoreCase("SHA-384")) {
-      return "SHA384";
-    } else if (md.equalsIgnoreCase("SHA-512")) {
-      return "SHA512";
-    } else if (md.equalsIgnoreCase("SHA-512/224")) {
-      return "SHA512/224";
-    } else if (md.equalsIgnoreCase("SHA-512/256")) {
-      return "SHA512/256";
-    }
-    return md;
-  }
-
-  /**
-   * Returns an instance of java.security.Signature for an algorithm name, a digest name and a
-   * signature format.
-   *
-   * @param md the name of the message digest (e.g. "SHA-256")
-   * @param signatureAlgorithm the name of the signature algorithm (e.g. "ECDSA")
-   * @param signatureFormat the format of the signatures.
-   * @return an instance of java.security.Signature if the algorithm is known
-   * @throws NoSuchAlgorithmException if the algorithm is not known
-   */
-  protected static Signature getSignatureInstance(
-      JsonObject group, String signatureAlgorithm, Format signatureFormat)
-      throws NoSuchAlgorithmException {
-    String md = "";
-    if (group.has("sha")) {
-      md = convertMdName(getString(group, "sha"));
-    }
-    if (signatureAlgorithm.equals("ECDSA") || signatureAlgorithm.equals("DSA")) {
-      if (signatureFormat == Format.ASN) {
-        return Signature.getInstance(md + "WITH" + signatureAlgorithm);
-      } else if (signatureFormat == Format.P1363) {
-        // The algorithm names for signature schemes with P1363 format have distinct names
-        // in distinct providers. This is mainly the case since the P1363 format has only
-        // been added in jdk11, while providers such as BouncyCastle added the format earlier
-        // than that. Hence the code below just tries known algorithm names.
-        try {
-          String jdkName = md + "WITH" + signatureAlgorithm + "inP1363Format";
-          return Signature.getInstance(jdkName);
-        } catch (NoSuchAlgorithmException ex) {
-          // jdkName is not known.
-        }
-        try {
-          String bcName = md + "WITHPLAIN-" + signatureAlgorithm;
-          return Signature.getInstance(bcName);
-        } catch (NoSuchAlgorithmException ex) {
-          // bcName is not known.
-        }
-      }
-    } else if (signatureAlgorithm.equals("RSA")) {
-      if (signatureFormat == Format.RAW) {
-        return Signature.getInstance(md + "WITH" + signatureAlgorithm);
-      }
-    } else if (signatureAlgorithm.equals("ED25519") || signatureAlgorithm.equals("ED448")) {
-      if (signatureFormat == Format.RAW) {
-        // http://openjdk.java.net/jeps/339
-        try {
-          return Signature.getInstance(signatureAlgorithm);
-        } catch (NoSuchAlgorithmException ex) {
-          // signatureAlgorithm is not known.
-        }
-        // An alternative name (e.g. used by BouncyCastle) is "EDDSA".
-        try {
-          return Signature.getInstance("EDDSA");
-        } catch (NoSuchAlgorithmException ex) {
-          // "EDDSA" is not known either.
-        }
-      }
-    }
-    throw new NoSuchAlgorithmException(
-        "Algorithm "
-            + signatureAlgorithm
-            + " with format "
-            + signatureFormat
-            + " is not supported");
   }
 
   /**
@@ -186,19 +80,9 @@ public class JsonSignatureTest {
    */
   // This is a false positive, since errorprone cannot track values passed into a method.
   @SuppressWarnings("InsecureCryptoUsage")
-  protected static PublicKey getPublicKey(JsonObject group, String algorithm) throws Exception {
-    KeyFactory kf;
-    if (algorithm.equals("ECDSA")) {
-      kf = KeyFactory.getInstance("EC");
-    } else if (algorithm.equals("ED25519") || algorithm.equals("ED448")) {
-      // http://openjdk.java.net/jeps/339
-      kf = KeyFactory.getInstance("EdDSA");
-    } else {
-      kf = KeyFactory.getInstance(algorithm);
-    }
-    byte[] encoded = TestUtil.hexToBytes(getString(group, "keyDer"));
-    X509EncodedKeySpec x509keySpec = new X509EncodedKeySpec(encoded);
-    return kf.generatePublic(x509keySpec);
+  protected static Ed25519PublicKey getPublicKey(JsonObject group, String algorithm) throws Exception {
+    byte[] encoded = TestUtil.hexToBytes(getString(group.getAsJsonObject("key"), "pk"));
+    return Ed25519PublicKey.fromByteArray(encoded);
   }
 
   /** 
@@ -266,32 +150,7 @@ public class JsonSignatureTest {
     Set<String> skippedGroups = new HashSet<String>();
     for (JsonElement g : test.getAsJsonArray("testGroups")) {
       JsonObject group = g.getAsJsonObject();
-      PublicKey key;
-      try {
-        key = getPublicKey(group, signatureAlgorithm);
-      } catch (GeneralSecurityException ex) {
-        if (!allowSkippingKeys) {
-          throw ex;
-        }
-        if (group.has("key")) {
-          JsonObject keyStruct = group.getAsJsonObject("key");
-          if (keyStruct.has("curve")) {
-            skippedGroups.add("curve = " + getString(keyStruct, "curve"));
-          }
-        }
-        skippedKeys++;
-        continue;
-      }
-      Signature verifier;
-      try {
-        verifier = getSignatureInstance(group, signatureAlgorithm, signatureFormat);
-      } catch (NoSuchAlgorithmException ex) {
-        if (!allowSkippingKeys) {
-          throw ex;
-        }
-        skippedAlgorithms++;
-        continue;
-      }
+      Ed25519PublicKey key = getPublicKey(group, signatureAlgorithm);
       supportedKeys++;
       for (JsonElement t : group.getAsJsonArray("tests")) {
         cntTests++;
@@ -301,21 +160,15 @@ public class JsonSignatureTest {
         int tcid = testcase.get("tcId").getAsInt();
         String sig = TestUtil.bytesToHex(signature);
         String result = getString(testcase, "result");
-        verifier.initVerify(key);
-        verifier.update(message);
         boolean verified = false;
         Exception failure = null;
         try {
-          verified = verifier.verify(signature);
-        } catch (SignatureException ex) {
-          // verify can throw SignatureExceptions if the signature is malformed.
+          Ed25519Signature s = Ed25519Signature.fromByteArray(signature);
+          verified = key.verify(message, s);
+        } catch (IllegalArgumentException ex) {
+          // Ed25519Signature.fromByteArray can throw IllegalArgumentException if
+          // the signature is malformed.
           // We don't flag these cases and simply consider the signature as invalid.
-          verified = false;
-          failure = ex;
-        } catch (java.lang.ArithmeticException ex) {
-          // b/33446454 The Sun provider may throw an ArithmeticException instead of
-          // the expected SignatureException for DSA signatures.
-          // We should eventually remove this.
           verified = false;
           failure = ex;
         } catch (Exception ex) {

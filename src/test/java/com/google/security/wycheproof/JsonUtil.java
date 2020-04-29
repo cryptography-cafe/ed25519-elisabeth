@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
@@ -37,9 +37,7 @@ public class JsonUtil {
    */
   public static JsonObject getTestVectors(String filename) throws 
       IOException {
-    // The directory where the test vectors are.
-    String testVectorsDir = "testvectors/";
-    FileInputStream is = new FileInputStream(testVectorsDir + filename);
+    InputStream is = JsonUtil.class.getClassLoader().getResourceAsStream(filename);
     JsonReader reader = new JsonReader(new InputStreamReader(is, UTF_8));
     JsonParser parser = new JsonParser();
     JsonElement elem = parser.parse(reader);
