@@ -38,6 +38,8 @@ dependencies {
     }
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("com.google.code.gson:gson:2.8.6")
+
+    jmh("org.bouncycastle:bcprov-jdk15on:1.65")
 }
 
 java {
