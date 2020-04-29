@@ -23,7 +23,6 @@ import com.google.gson.stream.JsonReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.math.BigInteger;
 
 /** Utilities for reading test vectors in JSON format */
 public class JsonUtil {
@@ -57,30 +56,5 @@ public class JsonUtil {
   public static byte[] asByteArray(JsonElement element) {
     String hex = element.getAsString();
     return TestUtil.hexToBytes(hex);
-  }
-
-  /**
-   * Converts a JsonElement into a BigInteger.
-   * @param element a JsonElement containing a BigInteger. 
-   * Wycheproof represents BigIntegers as hexadecimal strings using
-   * twos complement representation.
-   * <p> E.g., 31 is represented as "1f", -1 is represented as "f", and
-   * 255 is represented as "0ff".
-   * @throws ClassCastException if element is not a valid string value.
-   * @throws IllegalStateException if element contains an array.
-   * @throws NumberFormatException if representation of the BigInteger is invalid.
-   */ 
-  public static BigInteger asBigInteger(JsonElement element) {
-    String hex = element.getAsString();
-    // TODO(bleichen): Consider to change the representation of BigIntegers in
-    //   Wycheproof as hexadecimal string with a sign.
-    if (hex.length() % 2 == 1) {
-      if (hex.charAt(0) >= '0' && hex.charAt(0) <= '7') {
-        hex = "0" + hex;
-      } else {
-        hex = "f" + hex;
-      }
-    }
-    return new BigInteger(TestUtil.hexToBytes(hex));
   }
 }

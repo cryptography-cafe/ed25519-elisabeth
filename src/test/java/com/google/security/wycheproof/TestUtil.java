@@ -13,10 +13,6 @@
  */
 package com.google.security.wycheproof;
 
-import java.nio.ByteBuffer;
-import java.security.Provider;
-import java.security.Security;
-
 /** Test utilities */
 public class TestUtil {
 
@@ -38,18 +34,6 @@ public class TestUtil {
     return result.toString();
   }
 
-  /**
-   * Returns a hexadecimal representation of the bytes written to ByteBuffer (i.e. all the bytes
-   * before position()).
-   */
-  public static String byteBufferToHex(ByteBuffer buffer) {
-    ByteBuffer tmp = buffer.duplicate();
-    tmp.flip();
-    byte[] bytes = new byte[tmp.remaining()];
-    tmp.get(bytes);
-    return bytesToHex(bytes);
-  }
-
   public static byte[] hexToBytes(String hex) throws IllegalArgumentException {
     if (hex.length() % 2 != 0) {
       throw new IllegalArgumentException("Expected a string of even length");
@@ -65,38 +49,5 @@ public class TestUtil {
       result[i] = (byte) (16 * hi + lo);
     }
     return result;
-  }
-
-  public static void installOnlyThisProvider(Provider provider) {
-    for (Provider p : Security.getProviders()) {
-      Security.removeProvider(p.getName());
-    }
-    Security.insertProviderAt(provider, 1);
-  }
-
-  public static void installOnlyOpenJDKProviders() throws Exception {
-    for (Provider p : Security.getProviders()) {
-      Security.removeProvider(p.getName());
-    }
-    installOpenJDKProvider("com.sun.net.ssl.internal.ssl.Provider");
-    installOpenJDKProvider("com.sun.crypto.provider.SunJCE");
-    installOpenJDKProvider("com.sun.security.sasl.Provider");
-    installOpenJDKProvider("org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-    installOpenJDKProvider("sun.security.ec.SunEC");
-    installOpenJDKProvider("sun.security.jgss.SunProvider");
-    installOpenJDKProvider("sun.security.provider.Sun");
-    installOpenJDKProvider("sun.security.rsa.SunRsaSign");
-    installOpenJDKProvider("sun.security.smartcardio.SunPCSC");
-  }
-
-  private static void installOpenJDKProvider(String className) throws Exception {
-    Provider provider = (Provider) Class.forName(className).getConstructor().newInstance();
-    Security.insertProviderAt(provider, 1);
-  }
-
-  public static void printJavaInformation() {
-    System.out.println("Running with: ");
-    System.out.println("  java.runtime.name: " + System.getProperty("java.runtime.name"));
-    System.out.println("  java.runtime.version: " + System.getProperty("java.runtime.version"));
   }
 }
