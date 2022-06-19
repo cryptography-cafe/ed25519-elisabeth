@@ -39,8 +39,7 @@ public class JsonUtil {
       IOException {
     InputStream is = JsonUtil.class.getClassLoader().getResourceAsStream(filename);
     JsonReader reader = new JsonReader(new InputStreamReader(is, UTF_8));
-    JsonParser parser = new JsonParser();
-    JsonElement elem = parser.parse(reader);
+    JsonElement elem = JsonParser.parseReader(reader);
     return elem.getAsJsonObject();
   }
 
