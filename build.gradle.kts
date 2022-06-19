@@ -37,7 +37,7 @@ dependencies {
         exclude("org.hamcrest")
     }
     testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("com.google.code.gson:gson:2.8.6")
+    testImplementation("com.google.code.gson:gson:2.9.0")
 
     jmh("org.bouncycastle:bcprov-jdk15on:1.65")
 }
