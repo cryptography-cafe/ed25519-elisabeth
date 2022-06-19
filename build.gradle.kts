@@ -31,7 +31,7 @@ sourceSets {
 dependencies {
     implementation("cafe.cryptography:curve25519-elisabeth:0.1.0")
 
-    compileOnly("org.jetbrains:annotations:19.0.0")
+    compileOnly("org.jetbrains:annotations:23.0.0")
 
     testImplementation("junit:junit:4.13.2") {
         exclude("org.hamcrest")
