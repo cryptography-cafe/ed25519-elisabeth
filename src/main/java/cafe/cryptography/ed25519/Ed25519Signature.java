@@ -6,8 +6,6 @@
 
 package cafe.cryptography.ed25519;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 import cafe.cryptography.curve25519.CompressedEdwardsY;

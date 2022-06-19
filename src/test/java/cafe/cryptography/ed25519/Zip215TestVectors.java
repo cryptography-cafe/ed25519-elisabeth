@@ -17,8 +17,6 @@ import java.util.List;
 import cafe.cryptography.curve25519.InvalidEncodingException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
 /**
  * Test against the ZIP 215 test vectors set.
  *

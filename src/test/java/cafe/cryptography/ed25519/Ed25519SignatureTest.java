@@ -8,10 +8,6 @@ package cafe.cryptography.ed25519;
 
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 public class Ed25519SignatureTest {
     @Test
     public void fromByteArrayAcceptsInvalidR() {
