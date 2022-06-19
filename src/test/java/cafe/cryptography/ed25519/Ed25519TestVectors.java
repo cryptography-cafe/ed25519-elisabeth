@@ -88,7 +88,7 @@ public class Ed25519TestVectors {
         for (TestTuple testCase : testCases) {
             Ed25519PrivateKey sk = Ed25519PrivateKey.fromByteArray(testCase.sk);
             assertThat("Test case " + testCase.caseNum + " failed",
-                    sk.expand().sign(testCase.message, sk.derivePublic()).toByteArray(), is(testCase.signature));
+                    sk.expand().sign(testCase.message).toByteArray(), is(testCase.signature));
         }
     }
 

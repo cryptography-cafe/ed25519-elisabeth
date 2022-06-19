@@ -24,31 +24,52 @@ public class Ed25519ExpandedPrivateKey {
     /**
      * The prefix component of the expanded Ed25519 private key.
      *
-     * Note that because the `final` keyword only makes the reference a constant, the
-     * contents of this byte[] could in theory be mutated (via reflection, as this field
-     * is private). This misunderstanding was a contributor to the "final" security bug in
-     * Google's Java implementation of Ed25519 [0]. However, the primary cause of that bug
-     * was their reuse of the prefix buffer to hold the result of calculating S; we are
-     * protected from that failure mode by the type-safe curve25519-elisabeth API.
+     * Note that because the `final` keyword only makes the reference a constant,
+     * the contents of this byte[] could in theory be mutated (via reflection, as
+     * this field is private). This misunderstanding was a contributor to the
+     * "final" security bug in Google's Java implementation of Ed25519 [0]. However,
+     * the primary cause of that bug was their reuse of the prefix buffer to hold
+     * the result of calculating S; we are protected from that failure mode by the
+     * type-safe curve25519-elisabeth API.
      *
      * [0] https://github.com/cryptosubtlety/final-security-bug
      */
     private final byte[] prefix;
 
+    /**
+     * The public key corresponding to this private key.
+     *
+     * We store the public key inside the expanded private key so that we always use
+     * the correct public key when creating signatures, while caching its
+     * computation along with the other expanded components.
+     *
+     * Version 0.1.0 of ed25519-elisabeth required the caller to provide the public
+     * key. This allowed the caller to control how the public key was cached in
+     * memory, but it created an opportunity for misuse: if two signatures were
+     * created using different public keys, the private scalar could be recovered
+     * from the signatures [0] [1]. We now always cache the public key ourselves to
+     * provide a safer signing API.
+     *
+     * [0] https://github.com/jedisct1/libsodium/issues/170
+     * [1] https://github.com/MystenLabs/ed25519-unsafe-libs
+     */
+    private final Ed25519PublicKey publicKey;
+
     Ed25519ExpandedPrivateKey(Scalar s, byte[] prefix) {
         this.s = s;
         this.prefix = prefix;
+        EdwardsPoint A = Constants.ED25519_BASEPOINT_TABLE.multiply(this.s);
+        this.publicKey = new Ed25519PublicKey(A);
     }
 
     /**
-     * Derive the Ed25519 public key corresponding to this expanded private key.
+     * Returns the Ed25519 public key corresponding to this expanded private key.
      *
      * @return the public key.
      */
     @NotNull
     public Ed25519PublicKey derivePublic() {
-        EdwardsPoint A = Constants.ED25519_BASEPOINT_TABLE.multiply(this.s);
-        return new Ed25519PublicKey(A);
+        return this.publicKey;
     }
 
     /**
@@ -57,8 +78,8 @@ public class Ed25519ExpandedPrivateKey {
      * @return the signature.
      */
     @NotNull
-    public Ed25519Signature sign(@NotNull byte[] message, @NotNull Ed25519PublicKey publicKey) {
-        return this.sign(message, 0, message.length, publicKey);
+    public Ed25519Signature sign(@NotNull byte[] message) {
+        return this.sign(message, 0, message.length);
     }
 
     /**
@@ -67,7 +88,7 @@ public class Ed25519ExpandedPrivateKey {
      * @return the signature.
      */
     @NotNull
-    public Ed25519Signature sign(@NotNull byte[] message, int offset, int length, @NotNull Ed25519PublicKey publicKey) {
+    public Ed25519Signature sign(@NotNull byte[] message, int offset, int length) {
         // @formatter:off
         // RFC 8032, section 5.1:
         //   PH(x)   | x (i.e., the identity function)
@@ -101,7 +122,7 @@ public class Ed25519ExpandedPrivateKey {
         // @formatter:on
         h.reset();
         h.update(R.toByteArray());
-        h.update(publicKey.toByteArray());
+        h.update(this.publicKey.toByteArray());
         h.update(message, offset, length);
         Scalar k = Scalar.fromBytesModOrderWide(h.digest());
 

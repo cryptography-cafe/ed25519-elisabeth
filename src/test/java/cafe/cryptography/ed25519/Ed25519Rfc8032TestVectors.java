@@ -161,11 +161,11 @@ public class Ed25519Rfc8032TestVectors {
 
     @Test
     public void testSign() {
-        assertThat(TEST_1_SK.expand().sign(TEST_1_MSG, TEST_1_VK), is(TEST_1_SIG));
-        assertThat(TEST_2_SK.expand().sign(TEST_2_MSG, TEST_2_VK), is(TEST_2_SIG));
-        assertThat(TEST_3_SK.expand().sign(TEST_3_MSG, TEST_3_VK), is(TEST_3_SIG));
-        assertThat(TEST_1024_SK.expand().sign(TEST_1024_MSG, TEST_1024_VK), is(TEST_1024_SIG));
-        assertThat(TEST_SHA_SK.expand().sign(TEST_SHA_MSG, TEST_SHA_VK), is(TEST_SHA_SIG));
+        assertThat(TEST_1_SK.expand().sign(TEST_1_MSG), is(TEST_1_SIG));
+        assertThat(TEST_2_SK.expand().sign(TEST_2_MSG), is(TEST_2_SIG));
+        assertThat(TEST_3_SK.expand().sign(TEST_3_MSG), is(TEST_3_SIG));
+        assertThat(TEST_1024_SK.expand().sign(TEST_1024_MSG), is(TEST_1024_SIG));
+        assertThat(TEST_SHA_SK.expand().sign(TEST_SHA_MSG), is(TEST_SHA_SIG));
     }
 
     @Test

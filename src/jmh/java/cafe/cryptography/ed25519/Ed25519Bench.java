@@ -33,7 +33,7 @@ public class Ed25519Bench {
         this.vk = this.sk.derivePublic();
         this.message = new byte[64];
         r.nextBytes(this.message);
-        this.signature = this.sk.expand().sign(this.message, this.vk);
+        this.signature = this.sk.expand().sign(this.message);
     }
 
     @Benchmark
@@ -42,13 +42,8 @@ public class Ed25519Bench {
     }
 
     @Benchmark
-    public Ed25519ExpandedPrivateKey expand() {
-        return this.sk.expand();
-    }
-
-    @Benchmark
     public Ed25519Signature sign() {
-        return this.expsk.sign(this.message, this.vk);
+        return this.expsk.sign(this.message);
     }
 
     @Benchmark
